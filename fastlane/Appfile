@@ -1,0 +1,6 @@
+app_identifier "com.britishairways.BAFlightsPlus" # The bundle identifier of your app
+#apple_id("codeexceptional@gmail.com") # Your Apple email address
+
+team_id "7SRE842CL9"  # Developer Portal Team ID
+itc_team_name "Codeexceptional Ltd"
+team_name "Codeexceptional Ltd"

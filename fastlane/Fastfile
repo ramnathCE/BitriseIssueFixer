@@ -1,0 +1,104 @@
+default_platform(:ios)
+
+platform :ios do
+  
+	desc "Runs all the tests"
+  	lane :test do
+    	scan
+  	end
+
+	desc "Submit a new Commercial Adhoc Build to Hockey App"
+  	lane :hockeyrelease do
+
+		changelog_from_git_commits(	
+		  pretty: "- %s",# Optional, lets you provide a custom format to apply to each commit when generating the changelog text
+		  date_format: "short",# Optional, lets you provide an additional date format to dates within the pretty-formatted string
+		  match_lightweight_tag: false,  # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
+		  merge_commit_filtering: "exclude_merges" # Optional, lets you filter out merge commits
+		)
+
+		git_commit_history = lane_context[SharedValues:: FL_CHANGELOG].gsub(/Merge.*\//i, '').gsub(/.*CMS-([0-9]+ .*)/i, 'CMS-\1').to_s.lines.grep(/CMS-/i).sort. uniq.join("")
+		
+		unless git_commit_history != ""
+			git_commit_history = "No ticket have been identified!!!"
+		end 
+
+ 		increment_description = increment_version_with_date
+ 		puts increment_description
+
+		after_all_clean_commit
+
+	end
+
+ 
+	desc "Clean the project and commit the changes"
+  	lane :after_all_clean_commit do |options|
+
+		# Make sure our directory is clean, except for changes Fastlane has made
+		clean_build_artifacts
+
+	
+		# Commit and push to remote
+		commit_version_bump(
+		  message: "Build & Version number is bumped with #{current_short_version} on #{current_build_date_time}",
+		  xcodeproj: "BitriseIssueFixer.xcodeproj",
+		  force: true
+		)
+
+		push_to_git_remote
+
+		if !does_git_tag_exists 
+			add_git_tag(
+			  grouping: "develop-builds",
+			  prefix: "v",
+			  build_number: current_short_version
+			)
+
+			push_git_tags
+		end
+
+  	end
+
+	desc "Does git tag exists for ioshockeyrelease"
+	def does_git_tag_exists
+		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
+		
+		if git_tag_exists(tag: tag_proposal)
+	  		UI.message("Tag is already exists and so it will ignored the add git")
+			return true
+		end
+
+		return false
+	end
+
+	def current_short_version
+		return get_info_plist_value(path: "./BitriseIssueFixer/Info.plist", key: "CFBundleShortVersionString")
+  	end
+
+  	def current_build_date_time
+		return get_info_plist_value(path: "./BitriseIssueFixer/Info.plist", key: "CFBuildDate")
+  	end
+
+  	def increment_version_with_date
+
+		ba_increment_version_number
+
+		build_time = Time.now.strftime('%a %d %b %Y %H:%M:%S')
+		set_info_plist_value(path: "./BitriseIssueFixer/Info.plist", key: "CFBuildDate", value: build_time)
+
+		return "Build & Version number is bumped with #{current_short_version} on #{build_time}"
+
+  	end
+
+	# Getting last known hash from develop
+	def last_known_develop_hash
+		long_hash_last_tag = sh("git rev-parse --tags")
+		dev_commit_develop = sh("git rev-parse --short " + long_hash_last_tag) 
+		dev_commit_develop_array = dev_commit_develop.split(" ")
+		unless dev_commit_develop != nil
+			return dev_commit_develop_array[1]
+		end 
+		return ""
+	end
+
+end
