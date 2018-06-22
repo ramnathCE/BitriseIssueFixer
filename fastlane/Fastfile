@@ -32,6 +32,7 @@ platform :ios do
 		  force: true
 		)
 
+	
 		push_to_git_remote(remote: "origin", force: true)
 
 		if !does_git_tag_exists 
