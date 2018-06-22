@@ -1,0 +1,12 @@
+scheme "BitriseIssueFixer"
+
+open_report(true)
+
+devices(["iPad (5th generation)"])
+
+clean true
+
+output_types("junit,html")
+
+# Enable skip_build to skip debug builds for faster test performance
+skip_build(true)
