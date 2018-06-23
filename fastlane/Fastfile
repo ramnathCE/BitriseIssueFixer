@@ -8,12 +8,12 @@ platform :ios do
   	end
 
 	desc "Submit a new Commercial Adhoc Build to Hockey App"
-  	lane :hockeyrelease do
+  	lane :hockeyrelease do |options|
 
  		increment_description = increment_version_with_date
  		puts increment_description
 
-		after_all_clean_commit
+		after_all_clean_commit featureBranch: options[:featureBranch]
 
 	end
 
@@ -32,26 +32,37 @@ platform :ios do
 		  force: true
 		)
 
-		push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: false)
-		UI.message(does_git_tag_exists)
+		if options[:featureBranch]
+			push_to_git_remote
+		else
+			push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: false)
+		end
+
+		does_git_tag_exists featureBranch: options[:featureBranch]
 
   	end
 
 	desc "Does git tag exists for ioshockeyrelease"
-	def does_git_tag_exists
+	lane does_git_tag_exists do |options|
 		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
 		UI.message("Tag to be pushed: - " + tag_proposal)
 		
 		if git_tag_exists(tag: tag_proposal)
-			return "Tag is already exists and so it will ignored the add git"
+			UI.message("Tag is already exists and so it will ignored the add git")
 		else
 			add_git_tag(
 			  grouping: "develop-builds",
 			  prefix: "v",
 			  build_number: current_short_version
 			)
-			push_git_tags(force: true, remote: "origin")
-			return "Tag is not exists and so it will add to git"
+			
+			if options[:featureBranch]
+				push_git_tags
+			else
+				push_git_tags(force: true, remote: "origin")
+			end
+
+			UI.message("Tag is not exists and so it will add to git")
 		end
 	end
 
