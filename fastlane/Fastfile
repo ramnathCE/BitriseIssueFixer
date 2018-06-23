@@ -45,7 +45,7 @@ platform :ios do
   	end
 
 	desc "Does git tag exists for ioshockeyrelease"
-	lane does_git_tag_exists do |options|
+	lane :does_git_tag_exists do |options|
 		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
 		UI.message("Tag to be pushed: - " + tag_proposal)
 		
