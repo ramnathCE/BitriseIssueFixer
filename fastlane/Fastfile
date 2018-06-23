@@ -44,7 +44,7 @@ platform :ios do
 		UI.message("Tag to be pushed: - " + tag_proposal)
 		
 		if git_tag_exists(tag: tag_proposal)
-			return "Tag is already exists and so it will ignored the add git")
+			return "Tag is already exists and so it will ignored the add git"
 		else
 			add_git_tag(
 			  grouping: "develop-builds",
