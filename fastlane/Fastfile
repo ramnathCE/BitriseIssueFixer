@@ -38,8 +38,7 @@ platform :ios do
 			add_git_tag(
 			  grouping: "develop-builds",
 			  prefix: "v",
-			  build_number: current_short_version,
-			  force: true
+			  build_number: current_short_version
 			)
 
 			push_git_tags
