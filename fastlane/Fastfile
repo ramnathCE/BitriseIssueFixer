@@ -34,7 +34,10 @@ platform :ios do
 
 		push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: true)
 
-		if does_git_tag_exists == false
+		if does_git_tag_exists
+			UI.message("Tag is already exists and so it will ignored the add git")
+		else
+			UI.message("Tag is not exists and so it will add to git")
 			add_git_tag(
 			  grouping: "develop-builds",
 			  prefix: "v",
@@ -51,11 +54,10 @@ platform :ios do
 		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
 		
 		if git_tag_exists(tag: tag_proposal)
-	  		UI.message("Tag is already exists and so it will ignored the add git")
 			return true
+		else
+			return false
 		end
-
-		return false
 	end
 
 	def current_short_version
