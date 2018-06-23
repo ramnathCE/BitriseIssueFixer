@@ -17,7 +17,6 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-  feature/git_tag_test2
 	<string>1.0.3</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.3</string>
