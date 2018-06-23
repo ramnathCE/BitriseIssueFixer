@@ -34,7 +34,16 @@ platform :ios do
 
 		push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: false)
 
-		if does_git_tag_exists
+		does_git_tag_exists
+
+  	end
+
+	desc "Does git tag exists for ioshockeyrelease"
+	def does_git_tag_exists
+		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
+		UI.message("Tag to be pushed: - " + tag_proposal)
+		
+		if git_tag_exists(tag: tag_proposal)
 			UI.message("Tag is already exists and so it will ignored the add git")
 		else
 			UI.message("Tag is not exists and so it will add to git")
@@ -46,17 +55,7 @@ platform :ios do
 			push_git_tags
 		end
 
-  	end
-
-	desc "Does git tag exists for ioshockeyrelease"
-	def does_git_tag_exists
-		tag_proposal = "develop-builds/ioshockeyrelease/v"+current_short_version
-		
-		if git_tag_exists(tag: tag_proposal)
-			return true
-		else
-			return false
-		end
+		return false
 	end
 
 	def current_short_version
