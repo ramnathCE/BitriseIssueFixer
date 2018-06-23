@@ -51,7 +51,7 @@ platform :ios do
 			  prefix: "v",
 			  build_number: current_short_version
 			)
-			push_git_tags
+			push_git_tags(force: true, remote: "origin")
 			return "Tag is not exists and so it will add to git"
 		end
 	end
