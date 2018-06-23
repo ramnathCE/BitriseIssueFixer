@@ -32,13 +32,14 @@ platform :ios do
 		  force: true
 		)
 
-		push_to_git_remote(remote: "origin", force: true)
+		push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: true)
 
 		if !does_git_tag_exists 
 			add_git_tag(
 			  grouping: "develop-builds",
 			  prefix: "v",
-			  build_number: current_short_version
+			  build_number: current_short_version,
+			  force: true
 			)
 
 			push_git_tags
