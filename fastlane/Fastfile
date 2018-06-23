@@ -33,7 +33,6 @@ platform :ios do
 		)
 
 		push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: false)
-
 		UI.message(does_git_tag_exists)
 
   	end
