@@ -33,8 +33,10 @@ platform :ios do
 		)
 
 		if options[:featureBranch]
+			UI.message("From (after_all_clean_commit): - It is feature branch")
 			push_to_git_remote
 		else
+			UI.message("From (after_all_clean_commit): - It is not a feature branch")
 			push_to_git_remote(remote: "origin", remote_branch: "develop", force: true, tags: false)
 		end
 
@@ -57,8 +59,10 @@ platform :ios do
 			)
 			
 			if options[:featureBranch]
+				UI.message("From (does_git_tag_exists): - It is feature branch")
 				push_git_tags
 			else
+				UI.message("From (does_git_tag_exists): - It is not a feature branch")
 				push_git_tags(force: true, remote: "origin")
 			end
 
